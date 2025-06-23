@@ -96,6 +96,7 @@
     "sqlite3":"latest",
     "@mrnima/tiktok-downloader" :"^1.0.0",
     "@dark-yasiya/yt-dl.js":"latest",
+    "darksadasyt-imgbb-scraper":"latest",
     "wikipedia":"latest",
     "pdfkit":"latest",
     "@mrnima/facebook-downloader" : "^1.0.0",
