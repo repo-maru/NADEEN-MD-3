@@ -34,7 +34,7 @@ const l = console.log
 const ownerNumber = [`${config.OWNER_NUMBER}`];
 //===================SESSION======.=======================
 
-const df = __dirname + '/${config.SESSION_NAME}/creds.json';
+const df = __dirname + '/session/creds.json';
 
 if (!fs.existsSync(df)) {
   if (config.SESSION_ID) {
