@@ -45,9 +45,10 @@ if (!fs.existsSync(df)) {
       filer.download((err, data) => {
         if (err) throw err;
         fs.writeFile(df, data, () => {
-          console.log("✅ Mega session download completed !!");
+          console.log("✅ session download completed !!");
         });
       });
+    }
 // <<==========PORTS============>>
 const express = require("express");
 const app = express();
