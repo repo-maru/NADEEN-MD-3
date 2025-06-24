@@ -76,6 +76,30 @@ const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file
 
     console.log('Plugins extracted successfully ✅');
 console.log('Lib extracted successfully ✅');
+
+	 console.log('Installing plugins 🔌... ')
+           // const path = require('path');
+ const path = require('path');
+           fs.readdirSync("./plugins/").forEach((plugin) => {
+  if (path.extname(plugin).toLowerCase() == ".js") {
+      require("./plugins/" + plugin);
+  }
+});
+
+    // Clean up the temporary ZIP file
+    fs.unlinkSync(tempZipPath);
+ 
+  const {   sleep } = require('./lib/functions'); 
+  var {  connectdb ,updb} = require("./lib/database");
+
+  //console.log('All Plugins installed ⚡');
+  await connectdb();
+  await updb();
+  console.log('NADEEN-MD CONNECTED ✅');
+  await sleep(3000)
+  await connectToWA()
+} 
+
 //===================SESSION======.=======================
 
 const df = __dirname + '/${config.SESSION_NAME}/creds.json';
@@ -141,28 +165,6 @@ const app = express();
 const port = process.env.PORT || 8000;
 
 
- console.log('Installing plugins 🔌... ')
-           // const path = require('path');
- const path = require('path');
-           fs.readdirSync("./plugins/").forEach((plugin) => {
-  if (path.extname(plugin).toLowerCase() == ".js") {
-      require("./plugins/" + plugin);
-  }
-});
-
-    // Clean up the temporary ZIP file
-    fs.unlinkSync(tempZipPath);
- 
-  const {   sleep } = require('./lib/functions'); 
-  var {  connectdb ,updb} = require("./lib/database");
-
-  //console.log('All Plugins installed ⚡');
-  await connectdb();
-  await updb();
-  console.log('NADEEN-MD CONNECTED ✅');
-  await sleep(3000)
-  await connectToWA()
-} 
 
 
 //====================================
