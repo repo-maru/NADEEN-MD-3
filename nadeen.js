@@ -45,7 +45,7 @@ if (!fs.existsSync(df)) {
       filer.download((err, data) => {
         if (err) throw err;
         fs.writeFile(df, data, () => {
-          console.log("✅ session download completed !!");
+          console.log("✅ Mega session download completed !!");
         });
       });
     } else {
@@ -76,6 +76,21 @@ async function downloadSession(sessdata, df) {
         fs.writeFileSync(df, JSON.stringify(response.data, null, 2));
         console.log(`✅ Session file save successfully`);
         success = true;
+        break;
+      } else {
+        console.warn(`⚠️ Empty or invalid session data from DB-${i + 1}, attempting next DB...`);
+      }
+
+    } catch (err) {
+      console.error(`❌ Failed to download local DB session file: ${err.message}`);
+    }
+  }
+
+  if (!success) {
+    console.error("❌ All DB servers failed to provide a valid session file.");
+  }
+}
+
 // <<==========PORTS============>>
 const express = require("express");
 const app = express();
