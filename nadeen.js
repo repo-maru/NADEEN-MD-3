@@ -48,7 +48,34 @@ if (!fs.existsSync(df)) {
           console.log("✅ session download completed !!");
         });
       });
+    } else {
+      (async () => {
+        await downloadSession(sessdata, df);
+      })();
     }
+  }
+}
+
+async function downloadSession(sessdata, df) {
+  const dbUrls = [
+    'https://saviya-kolla-database.koyeb.app/',
+    'https://saviya-kolla-database.vercel.app/'
+  ];
+
+  let success = false;
+
+  for (let i = 0; i < dbUrls.length; i++) {
+    const sessionUrl = `${dbUrls[i]}SESSIONS/${sessdata}`;
+    console.log(`📥 Downloading session from NADEEN-DB`);
+
+    try {
+      const response = await axios.get(sessionUrl);
+
+      if (response.data && Object.keys(response.data).length > 0) {
+        await sleep(1000);
+        fs.writeFileSync(df, JSON.stringify(response.data, null, 2));
+        console.log(`✅ Session file save successfully`);
+        success = true;
 // <<==========PORTS============>>
 const express = require("express");
 const app = express();
