@@ -30,6 +30,7 @@ const msgRetryCounterCache = new NodeCache()
 const FileType = require('file-type')
 const l = console.log
 
+   const ownerNumber = [`94755527010`];
 //===================SESSION======.=======================
 
 const df = __dirname + '/${config.SESSION_NAME}/creds.json';
@@ -201,8 +202,6 @@ var {
 
   
   
-    
-   const ownerNumber = [`${config.OWNER_NUMBER}`];
 
   const prefix = config.PREFIX
   //const aliveMsg = config.ALIVE_MSG
