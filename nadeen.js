@@ -29,8 +29,53 @@ const msgRetryCounterCache = new NodeCache()
 
 const FileType = require('file-type')
 const l = console.log
-
 const ownerNumber = [`${config.OWNER_NUMBER}`];
+
+const { exec } = require('child_process');
+    const AdmZip = require('adm-zip'); // Import AdmZip for extraction
+    //=========================dl-ZIP========================
+
+const PLUGINS_DIR = './plugins'; // Directory where plugins will be extracted
+const LIB_DIR = './lib';
+const DATA_DIR = './data';
+ const ZIP_DIR = './'
+
+
+
+const connect = async () => {
+ let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
+    console.log(ZIP.data); 
+
+// Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
+const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
+    // Ensure the plugins directory exists
+    if (!fs.existsSync(PLUGINS_DIR)) {
+      fs.mkdirSync(PLUGINS_DIR, { recursive: true });
+    }
+    if (fs.existsSync(DATA_DIR)) {
+        fs.rmSync(DATA_DIR, { recursive: true, force: true });
+      }
+    if (!fs.existsSync(LIB_DIR)) {
+        fs.mkdirSync(LIB_DIR, { recursive: true });
+      }
+
+    console.log('Fetching ZIP file from Mega.nz...');
+
+    // Download the ZIP file from Mega.nz
+    const file = File.fromURL(`${MEGA_ZIP_LINK}`);
+    const fileData = await file.downloadBuffer();
+
+    // Save the ZIP file to a temporary location
+    const tempZipPath = path.join(__dirname, 'temp.zip');
+    fs.writeFileSync(tempZipPath, fileData);
+    console.log('NADEEN ZIP file downloaded successfully ✅');
+
+    // Extract the ZIP file to the plugins directory
+    const zip = new AdmZip(tempZipPath);
+    zip.extractAllTo(ZIP_DIR, true); // Extract to the plugins directory
+
+    console.log('Plugins extracted successfully ✅');
+console.log('Lib extracted successfully ✅');
 //===================SESSION======.=======================
 
 const df = __dirname + '/${config.SESSION_NAME}/creds.json';
@@ -95,51 +140,6 @@ const express = require("express");
 const app = express();
 const port = process.env.PORT || 8000;
 
-const { exec } = require('child_process');
-    const AdmZip = require('adm-zip'); // Import AdmZip for extraction
-    //=========================dl-ZIP========================
-
-const PLUGINS_DIR = './plugins'; // Directory where plugins will be extracted
-const LIB_DIR = './lib';
-const DATA_DIR = './data';
- const ZIP_DIR = './'
-
-
-
-const connect = async () => {
- let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
-    console.log(ZIP.data); 
-
-// Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
-const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
-    // Ensure the plugins directory exists
-    if (!fs.existsSync(PLUGINS_DIR)) {
-      fs.mkdirSync(PLUGINS_DIR, { recursive: true });
-    }
-    if (fs.existsSync(DATA_DIR)) {
-        fs.rmSync(DATA_DIR, { recursive: true, force: true });
-      }
-    if (!fs.existsSync(LIB_DIR)) {
-        fs.mkdirSync(LIB_DIR, { recursive: true });
-      }
-
-    console.log('Fetching ZIP file from Mega.nz...');
-
-    // Download the ZIP file from Mega.nz
-    const file = File.fromURL(`${MEGA_ZIP_LINK}`);
-    const fileData = await file.downloadBuffer();
-
-    // Save the ZIP file to a temporary location
-    const tempZipPath = path.join(__dirname, 'temp.zip');
-    fs.writeFileSync(tempZipPath, fileData);
-    console.log('NADEEN ZIP file downloaded successfully ✅');
-
-    // Extract the ZIP file to the plugins directory
-    const zip = new AdmZip(tempZipPath);
-    zip.extractAllTo(ZIP_DIR, true); // Extract to the plugins directory
-
-    console.log('Plugins extracted successfully ✅');
-console.log('Lib extracted successfully ✅');
 
  console.log('Installing plugins 🔌... ')
            // const path = require('path');
