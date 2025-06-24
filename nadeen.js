@@ -1547,4 +1547,4 @@ process.on("uncaughtException", function (err) {
   if (e.includes("Value not found")) return;
   if (e.includes("Authentication timed out")) restart();
   console.log("Caught exception: ", err);
-});
+})
