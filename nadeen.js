@@ -28,7 +28,6 @@ const path = require('path')
 const msgRetryCounterCache = new NodeCache()
 
 const FileType = require('file-type')
-const l = console.log
 const { exec } = require('child_process');
     const AdmZip = require('adm-zip'); // Import AdmZip for extraction
     //=========================dl-ZIP========================
