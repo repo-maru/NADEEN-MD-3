@@ -48,49 +48,6 @@ if (!fs.existsSync(df)) {
           console.log("✅ Mega session download completed !!");
         });
       });
-    } else {
-      (async () => {
-        await downloadSession(sessdata, df);
-      })();
-    }
-  }
-}
-
-async function downloadSession(sessdata, df) {
-  const dbUrls = [
-    'https://saviya-kolla-database.koyeb.app/',
-    'https://saviya-kolla-database.vercel.app/'
-  ];
-
-  let success = false;
-
-  for (let i = 0; i < dbUrls.length; i++) {
-    const sessionUrl = `${dbUrls[i]}SESSIONS/${sessdata}`;
-    console.log(`📥 Downloading session from NADEEN-DB`);
-
-    try {
-      const response = await axios.get(sessionUrl);
-
-      if (response.data && Object.keys(response.data).length > 0) {
-        await sleep(1000);
-        fs.writeFileSync(df, JSON.stringify(response.data, null, 2));
-        console.log(`✅ Session file save successfully`);
-        success = true;
-        break;
-      } else {
-        console.warn(`⚠️ Empty or invalid session data from DB-${i + 1}, attempting next DB...`);
-      }
-
-    } catch (err) {
-      console.error(`❌ Failed to download local DB session file: ${err.message}`);
-    }
-  }
-
-  if (!success) {
-    console.error("❌ All DB servers failed to provide a valid session file.");
-  }
-}
-
 // <<==========PORTS============>>
 const express = require("express");
 const app = express();
