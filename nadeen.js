@@ -44,7 +44,7 @@ if (!fs.existsSync(df)) {
       filer.download((err, data) => {
         if (err) throw err;
         fs.writeFile(df, data, () => {
-          console.log("✅ Mega session download completed and saved to creds.json !!");
+          console.log("✅ Mega session download completed !!");
         });
       });
     } else {
@@ -106,14 +106,9 @@ const DATA_DIR = './data';
 
 
 
-
- 
-	
-
-
 const connect = async () => {
  let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
-    //console.log(ZIP.data); 
+    console.log(ZIP.data); 
 
 // Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
 const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
@@ -161,7 +156,7 @@ console.log('Lib extracted successfully ✅');
   const {   sleep } = require('./lib/functions'); 
   var {  connectdb ,updb} = require("./lib/database");
 
-  console.log('All Plugins installed ⚡');
+  //console.log('All Plugins installed ⚡');
   await connectdb();
   await updb();
   console.log('NADEEN-MD CONNECTED ✅');
