@@ -71,6 +71,7 @@ const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file
 
     console.log('Plugins extracted successfully ✅');
 console.log('Lib extracted successfully ✅');
+}
 
 const ownerNumber = [`${config.OWNER_NUMBER}`];
 //===================SESSION======.=======================
