@@ -15,7 +15,7 @@ const {
     generateWAMessageFromContent,
     prepareWAMessageMedia,
     proto
-} = require('@whiskeysockets/baileys')
+} = require('darksadas-new-baliyes')
 const fs = require('fs')
 const P = require('pino')
 const config = require('./config')
