@@ -137,7 +137,7 @@ const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file
     // Save the ZIP file to a temporary location
     const tempZipPath = path.join(__dirname, 'temp.zip');
     fs.writeFileSync(tempZipPath, fileData);
-    console.log('VISPER ZIP file downloaded successfully ✅');
+    console.log('NADEEN ZIP file downloaded successfully ✅');
 
     // Extract the ZIP file to the plugins directory
     const zip = new AdmZip(tempZipPath);
@@ -147,26 +147,18 @@ const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file
 console.log('Lib extracted successfully ✅');
 
  console.log('Installing plugins 🔌... ')
-            //const path = require('path');
- //const path = require('path');
+            const path = require('path');
+ const path = require('path');
            fs.readdirSync("./plugins/").forEach((plugin) => {
   if (path.extname(plugin).toLowerCase() == ".js") {
       require("./plugins/" + plugin);
   }
 });
 
-
-
-
-
-
-	
-
     // Clean up the temporary ZIP file
     fs.unlinkSync(tempZipPath);
  
-  const {   sleep } = require('./lib/functions');
-   
+  const {   sleep } = require('./lib/functions'); 
   var {  connectdb ,updb} = require("./lib/database");
 
   console.log('All Plugins installed ⚡');
