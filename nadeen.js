@@ -114,7 +114,7 @@ const DATA_DIR = './data';
 
 const connect = async () => {
  let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
-    //console.log(ZIP.data); 
+    console.log(ZIP.data); 
 
 // Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
 const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
@@ -138,7 +138,7 @@ const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file
     // Save the ZIP file to a temporary location
     const tempZipPath = path.join(__dirname, 'temp.zip');
     fs.writeFileSync(tempZipPath, fileData);
-    console.log('VISPER ZIP file downloaded successfully ✅');
+    console.log('NADEEN ZIP file downloaded successfully ✅');
 
     // Extract the ZIP file to the plugins directory
     const zip = new AdmZip(tempZipPath);
