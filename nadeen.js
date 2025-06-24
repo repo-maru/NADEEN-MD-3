@@ -1535,7 +1535,7 @@ app.get("/", (req, res) => {
 });
 app.listen(port, () => console.log(`Nadeen-Md Server listening on port http://localhost:${port}`));
 setTimeout(() => {
-connectToWA()
+connectToWA();
 }, 3000);
 
 
@@ -1547,4 +1547,4 @@ process.on("uncaughtException", function (err) {
   if (e.includes("Value not found")) return;
   if (e.includes("Authentication timed out")) restart();
   console.log("Caught exception: ", err);
-})
+});
