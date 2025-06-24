@@ -22,8 +22,6 @@ const config = require('./config')
 const qrcode = require('qrcode-terminal')
 const NodeCache = require('node-cache')
 const util = require('util')
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson, fetchBuffer, getFile } = require('./lib/functions')
-const { sms, downloadMediaMessage } = require('./lib/msg')
 const axios = require('axios')
 const { File } = require('megajs')
 const path = require('path')
@@ -31,24 +29,10 @@ const msgRetryCounterCache = new NodeCache()
 
 const FileType = require('file-type')
 const l = console.log
-var {
-  updateCMDStore,
-  isbtnID,
-  getCMDStore,
-  getCmdForCmdId,
-  connectdb,
-  input,
-  get,
-  getalls,
-  updb,
-  updfb,
-  upresbtn,
-} = require("./lib/database");
 
-const ownerNumber = [`${config.OWNER_NUMBER}`];
 //===================SESSION======.=======================
 
-const df = __dirname + '/session/creds.json';
+const df = __dirname + '/${config.SESSION_NAME}/creds.json';
 
 if (!fs.existsSync(df)) {
   if (config.SESSION_ID) {
@@ -128,7 +112,7 @@ const DATA_DIR = './data';
 
 const connect = async () => {
  let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
-    console.log(ZIP.data); 
+    //console.log(ZIP.data); 
 
 // Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
 const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
@@ -218,7 +202,8 @@ var {
   
   
     
-    
+   const ownerNumber = [`${config.OWNER_NUMBER}`];
+
   const prefix = config.PREFIX
   //const aliveMsg = config.ALIVE_MSG
   const autoreadStatus = config.AUTO_READ_STATUS
