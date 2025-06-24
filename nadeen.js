@@ -147,7 +147,7 @@ const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file
 console.log('Lib extracted successfully ✅');
 
  console.log('Installing plugins 🔌... ')
-            const path = require('path');
+           // const path = require('path');
  const path = require('path');
            fs.readdirSync("./plugins/").forEach((plugin) => {
   if (path.extname(plugin).toLowerCase() == ".js") {
