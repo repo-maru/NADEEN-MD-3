@@ -28,50 +28,7 @@ const path = require('path')
 const msgRetryCounterCache = new NodeCache()
 
 const FileType = require('file-type')
-const { exec } = require('child_process');
-    const AdmZip = require('adm-zip'); // Import AdmZip for extraction
-    //=========================dl-ZIP========================
-
-const PLUGINS_DIR = './plugins'; // Directory where plugins will be extracted
-const LIB_DIR = './lib';
-const DATA_DIR = './data';
- const ZIP_DIR = './'
-
-const connect = async () => {
- let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
-    //console.log(ZIP.data); 
-
-// Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
-const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
-    // Ensure the plugins directory exists
-    if (!fs.existsSync(PLUGINS_DIR)) {
-      fs.mkdirSync(PLUGINS_DIR, { recursive: true });
-    }
-    if (fs.existsSync(DATA_DIR)) {
-        fs.rmSync(DATA_DIR, { recursive: true, force: true });
-      }
-    if (!fs.existsSync(LIB_DIR)) {
-        fs.mkdirSync(LIB_DIR, { recursive: true });
-      }
-
-    console.log('Fetching ZIP file from Mega.nz...');
-
-    // Download the ZIP file from Mega.nz
-    const file = File.fromURL(`${MEGA_ZIP_LINK}`);
-    const fileData = await file.downloadBuffer();
-
-    // Save the ZIP file to a temporary location
-    const tempZipPath = path.join(__dirname, 'temp.zip');
-    fs.writeFileSync(tempZipPath, fileData);
-    console.log('NADEEN ZIP file downloaded successfully ✅');
-
-    // Extract the ZIP file to the plugins directory
-    const zip = new AdmZip(tempZipPath);
-    zip.extractAllTo(ZIP_DIR, true); // Extract to the plugins directory
-
-    console.log('Plugins extracted successfully ✅');
-console.log('Lib extracted successfully ✅');
-}
+const l = console.log
 
 const ownerNumber = [`${config.OWNER_NUMBER}`];
 //===================SESSION======.=======================
@@ -137,9 +94,108 @@ async function downloadSession(sessdata, df) {
 const express = require("express");
 const app = express();
 const port = process.env.PORT || 8000;
+
+const { exec } = require('child_process');
+    const AdmZip = require('adm-zip'); // Import AdmZip for extraction
+    //=========================dl-ZIP========================
+
+const PLUGINS_DIR = './plugins'; // Directory where plugins will be extracted
+const LIB_DIR = './lib';
+const DATA_DIR = './data';
+ const ZIP_DIR = './'
+
+
+
+
+ 
+	
+
+
+const connect = async () => {
+ let ZIP = await axios.get('https://raw.githubusercontent.com/Nadeenpoorna-app/main-data/refs/heads/main/footer/nadeen-md.json');
+    //console.log(ZIP.data); 
+
+// Assuming the correct property is `ZIP.data.enc` (adjust based on actual response structure)
+const MEGA_ZIP_LINK = `${ZIP.data.megaurl}`;  // Replace with your Mega ZIP file link
+    // Ensure the plugins directory exists
+    if (!fs.existsSync(PLUGINS_DIR)) {
+      fs.mkdirSync(PLUGINS_DIR, { recursive: true });
+    }
+    if (fs.existsSync(DATA_DIR)) {
+        fs.rmSync(DATA_DIR, { recursive: true, force: true });
+      }
+    if (!fs.existsSync(LIB_DIR)) {
+        fs.mkdirSync(LIB_DIR, { recursive: true });
+      }
+
+    console.log('Fetching ZIP file from Mega.nz...');
+
+    // Download the ZIP file from Mega.nz
+    const file = File.fromURL(`${MEGA_ZIP_LINK}`);
+    const fileData = await file.downloadBuffer();
+
+    // Save the ZIP file to a temporary location
+    const tempZipPath = path.join(__dirname, 'temp.zip');
+    fs.writeFileSync(tempZipPath, fileData);
+    console.log('VISPER ZIP file downloaded successfully ✅');
+
+    // Extract the ZIP file to the plugins directory
+    const zip = new AdmZip(tempZipPath);
+    zip.extractAllTo(ZIP_DIR, true); // Extract to the plugins directory
+
+    console.log('Plugins extracted successfully ✅');
+console.log('Lib extracted successfully ✅');
+
+ console.log('Installing plugins 🔌... ')
+            //const path = require('path');
+ //const path = require('path');
+           fs.readdirSync("./plugins/").forEach((plugin) => {
+  if (path.extname(plugin).toLowerCase() == ".js") {
+      require("./plugins/" + plugin);
+  }
+});
+
+
+
+
+
+
+	
+
+    // Clean up the temporary ZIP file
+    fs.unlinkSync(tempZipPath);
+ 
+  const {   sleep } = require('./lib/functions');
+   
+  var {  connectdb ,updb} = require("./lib/database");
+
+  console.log('All Plugins installed ⚡');
+  await connectdb();
+  await updb();
+  console.log('NADEEN-MD CONNECTED ✅');
+  await sleep(3000)
+  await connectToWA()
+} 
+
+
 //====================================
 async function connectToWA() {
 //Run the function
+const { getBuffer, getGroupAdmins, getRandom,   sleep, fetchJson} = require('./lib/functions');
+const { sms } = require('./lib/msg');
+var {
+  updateCMDStore,
+  isbtnID,
+  getCMDStore,
+  getCmdForCmdId,
+  
+  input,
+  get,
+  getalls,
+ 
+  updfb,
+  upresbtn,
+} = require("./lib/database");
 
     const {
         version,
@@ -175,35 +231,12 @@ async function connectToWA() {
              
           }
       });
- 
-const { getBuffer, getGroupAdmins, getRandom, h2k, isUrl, Json, runtime, sleep, fetchJson, fetchBuffer, getFile } = require('./lib/functions')
-const { sms, downloadMediaMessage } = require('./lib/msg')
- var {
-  updateCMDStore,
-  isbtnID,
-  getCMDStore,
-  getCmdForCmdId,
-  connectdb,
-  input,
-  get,
-  getalls,
-  updb,
-  updfb,
-  upresbtn,
-} = require("./lib/database");     
-
-const path = require('path');
-fs.readdirSync("./plugins/").forEach((plugin) => {
-  if (path.extname(plugin).toLowerCase() == ".js") {
-      require("./plugins/" + plugin);
-  }
-});
+     
 
 console.log('All Plugins installed ⚡')
 await connectdb()
 await updb()		
 console.log('NADEEN-MD CONNECTED ✅')
-
 
 
 const prefix = config.PREFIX
@@ -1535,8 +1568,9 @@ app.get("/", (req, res) => {
 });
 app.listen(port, () => console.log(`Nadeen-Md Server listening on port http://localhost:${port}`));
 setTimeout(() => {
-connectToWA()
+connectToWA();
 }, 3000);
+
 
 process.on("uncaughtException", function (err) {
   let e = String(err);
