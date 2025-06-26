@@ -15,7 +15,7 @@ const {
     generateWAMessageFromContent,
     prepareWAMessageMedia,
     proto
-} = require('darksadas-new-baliyes')
+} = require('@whiskeysockets/baileys')
 const fs = require('fs')
 const P = require('pino')
 const config = require('./config')
@@ -120,7 +120,7 @@ async function connectToWA() {
     const {
         state,
         saveCreds
-    } = await useMultiFileAuthState(__dirname + `/session`)
+    } = await useMultiFileAuthState(__dirname + `/session/`)
     const conn = makeWASocket({
         logger: P({
             level: "fatal"
